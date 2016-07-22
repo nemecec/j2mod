@@ -98,7 +98,6 @@ public final class WriteMultipleRegistersRequest extends ModbusRequest {
      * where the slave device has data which are not actually
      * <tt>short</tt> values in the range of registers being processed.
      */
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         WriteMultipleRegistersResponse response;
 

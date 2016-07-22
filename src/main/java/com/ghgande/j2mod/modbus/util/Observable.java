@@ -31,13 +31,13 @@ public class Observable {
 
     private static final Logger logger = LoggerFactory.getLogger(Observable.class);
 
-    private Vector<Observer> observers;
+    private Vector observers;
 
     /**
      * Constructs a new Observable instance.
      */
     public Observable() {
-        observers = new Vector<Observer>(10);
+        observers = new Vector(10);
     }
 
     public synchronized int getObserverCount() {
@@ -82,7 +82,8 @@ public class Observable {
      */
     public synchronized void notifyObservers(Object arg) {
         for (int i = 0; i < observers.size(); i++) {
-            observers.elementAt(i).update(this, arg);
+            Observer observer = (Observer) observers.elementAt(i);
+            observer.update(this, arg);
         }
     }
 }

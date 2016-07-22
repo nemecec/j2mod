@@ -20,7 +20,8 @@ import com.ghgande.j2mod.modbus.Modbus;
 import com.ghgande.j2mod.modbus.io.AbstractModbusTransport;
 import com.ghgande.j2mod.modbus.io.ModbusRTUTransport;
 import com.ghgande.j2mod.modbus.io.ModbusTCPTransport;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
+import com.ghgande.j2mod.modbus.serial.JSerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ public class ModbusMasterFactory {
              * additional part after the device name, it will be used as the
              * Modbus unit number.
              */
-            SerialParameters parms = new SerialParameters();
+            ModSerialParameters parms = new JSerialParameters();
             parms.setPortName(parts[1]);
             parms.setBaudRate(9600);
             parms.setDatabits(8);
@@ -63,7 +64,7 @@ public class ModbusMasterFactory {
             parms.setEcho(false);
             try {
                 ModbusRTUTransport transport = new ModbusRTUTransport();
-                transport.setCommPort(SerialPort.getCommPort(parms.getPortName()));
+                transport.setCommPort(parms.getCommPort());
                 transport.setEcho(false);
                 return transport;
             }

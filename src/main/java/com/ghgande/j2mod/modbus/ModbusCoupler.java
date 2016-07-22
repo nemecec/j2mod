@@ -21,8 +21,7 @@ import com.ghgande.j2mod.modbus.procimg.ProcessImageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Hashtable;
 
 /**
  * Class implemented following a Singleton pattern, to couple the slave side
@@ -38,7 +37,6 @@ import java.util.Map;
  *
  * @deprecated As of 2.3.4 This mechanism for handling process images has been superseded by a more flexible mechanism {@link com.ghgande.j2mod.modbus.slave.ModbusSlave} and {@link com.ghgande.j2mod.modbus.slave.ModbusSlaveFactory}
  */
-@Deprecated
 public class ModbusCoupler {
 
     private static final Logger logger = LoggerFactory.getLogger(ModbusCoupler.class);
@@ -47,7 +45,7 @@ public class ModbusCoupler {
     private static ModbusCoupler modbusCoupler; // Singleton reference
 
     // instance attributes
-    private Map<Integer, ProcessImage> processImages = new HashMap<Integer, ProcessImage>();
+    private Hashtable processImages = new Hashtable();
     private boolean master = true;
     private ProcessImageFactory processImageFactory;
 
@@ -100,7 +98,7 @@ public class ModbusCoupler {
      * @return the <tt>ProcessImage</tt>.
      */
     public synchronized ProcessImage getProcessImage(int unitID) {
-        return processImages.get(unitID);
+        return (ProcessImage) processImages.get(new Integer(unitID));
     }
 
     /**
@@ -110,7 +108,7 @@ public class ModbusCoupler {
      * @param procimg the <tt>ProcessImage</tt> to be set.
      */
     public synchronized void setProcessImage(ProcessImage procimg) {
-        processImages.put(procimg.getUnitID(), procimg);
+        processImages.put(new Integer(procimg.getUnitID()), procimg);
     }
 
     /**

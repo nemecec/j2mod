@@ -68,7 +68,6 @@ public final class ReportSlaveIDRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         return createExceptionResponse(Modbus.ILLEGAL_FUNCTION_EXCEPTION);
     }

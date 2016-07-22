@@ -53,7 +53,6 @@ public class ModbusRTUTCPTransport extends ModbusTCPTransport {
         setHeadless();
     }
 
-    @Override
     public void writeMessage(ModbusMessage msg) throws ModbusIOException {
         writeMessage(msg, true);
     }

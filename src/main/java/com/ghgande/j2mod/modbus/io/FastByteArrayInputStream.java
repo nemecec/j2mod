@@ -82,7 +82,7 @@ public class FastByteArrayInputStream extends InputStream {
 
     public int read() throws IOException {
         logger.debug("read()");
-        logger.debug("count={}", count, pos);
+        logger.debug("count={}, pos={}", String.valueOf(count), String.valueOf(pos));
         return (pos < count) ? (buf[pos++] & 0xff) : (-1);
     }
 
@@ -126,13 +126,13 @@ public class FastByteArrayInputStream extends InputStream {
     public void mark(int readlimit) {
         logger.debug("mark()");
         mark = pos;
-        logger.debug("mark={}", mark, pos);
+        logger.debug("mark={}, pos={}", String.valueOf(mark), String.valueOf(pos));
     }
 
     public void reset() {
         logger.debug("reset()");
         pos = mark;
-        logger.debug("mark={} pos={}", mark, pos);
+        logger.debug("mark={}, pos={}", String.valueOf(mark), String.valueOf(pos));
     }
 
     public boolean markSupported() {

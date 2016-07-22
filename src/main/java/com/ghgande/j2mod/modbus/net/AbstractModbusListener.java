@@ -27,8 +27,6 @@ import com.ghgande.j2mod.modbus.slave.ModbusSlaveFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
-
 /**
  * Definition of a listener class
  *
@@ -40,7 +38,7 @@ public abstract class AbstractModbusListener implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(AbstractModbusListener.class);
     protected int port = Modbus.DEFAULT_PORT;
     protected boolean listening;
-    protected InetAddress address;
+    protected String address;
     protected String error;
     protected int timeout = Modbus.DEFAULT_TIMEOUT;
 
@@ -78,7 +76,7 @@ public abstract class AbstractModbusListener implements Runnable {
      *
      * @param addr an <tt>InetAddress</tt> instance.
      */
-    public void setAddress(InetAddress addr) {
+    public void setAddress(String addr) {
         address = addr;
     }
 
@@ -87,7 +85,7 @@ public abstract class AbstractModbusListener implements Runnable {
      *
      * @return Bound address
      */
-    public InetAddress getAddress() {
+    public String getAddress() {
         return address;
     }
 

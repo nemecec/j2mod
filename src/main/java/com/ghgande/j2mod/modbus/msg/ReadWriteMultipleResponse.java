@@ -186,8 +186,8 @@ public final class ReadWriteMultipleResponse extends ModbusResponse {
         int offset = 0;
         result[offset++] = (byte)byteCount;
 
-        for (InputRegister register : registers) {
-            byte[] data = register.toBytes();
+        for (int i = 0; i < registers.length; i++) {
+            byte[] data = registers[i].toBytes();
 
             result[offset++] = data[0];
             result[offset++] = data[1];

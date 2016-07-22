@@ -20,8 +20,17 @@ import com.ghgande.j2mod.modbus.util.ModbusUtil;
 /**
  * Descibes the types of Modbus Slaves
  */
-public enum ModbusSlaveType {
-    TCP, UDP, SERIAL;
+public class ModbusSlaveType {
+
+    public final static ModbusSlaveType TCP = new ModbusSlaveType("TCP");
+    public final static ModbusSlaveType UDP = new ModbusSlaveType("UDP");
+    public final static ModbusSlaveType SERIAL = new ModbusSlaveType("SERIAL");
+
+    private final String name;
+
+    public ModbusSlaveType(String name) {
+        this.name = name;
+    }
 
     /**
      * Returns true if this type is one of those listed
@@ -29,10 +38,10 @@ public enum ModbusSlaveType {
      * @param types Array of types to check for
      * @return True if this is one of the array
      */
-    public boolean is(ModbusSlaveType... types) {
+    public boolean is(ModbusSlaveType[] types) {
         if (!ModbusUtil.isBlank(types)) {
-            for (ModbusSlaveType type : types) {
-                if (equals(type)) {
+            for (int i = 0; i < types.length; i++) {
+                if (equals(types[i])) {
                     return true;
                 }
             }
@@ -48,5 +57,13 @@ public enum ModbusSlaveType {
      */
     public String getKey(int port) {
         return toString() + port;
+    }
+
+    public String toString() {
+        return name;
+    }
+
+    public boolean equals(Object obj) {
+        return this.name.equals(((ModbusSlaveType)obj).name);
     }
 }

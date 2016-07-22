@@ -112,7 +112,6 @@ public final class WriteMultipleCoilsRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         WriteMultipleCoilsResponse response;
         DigitalOut douts[];

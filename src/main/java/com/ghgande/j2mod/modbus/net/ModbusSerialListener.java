@@ -18,7 +18,7 @@ package com.ghgande.j2mod.modbus.net;
 import com.ghgande.j2mod.modbus.ModbusIOException;
 import com.ghgande.j2mod.modbus.io.AbstractModbusTransport;
 import com.ghgande.j2mod.modbus.io.ModbusSerialTransport;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +40,12 @@ public class ModbusSerialListener extends AbstractModbusListener {
     /**
      * Constructs a new <tt>ModbusSerialListener</tt> instance.
      *
-     * @param params a <tt>SerialParameters</tt> instance.
+     * @param params a <tt>ModSerialParameters</tt> instance.
      */
-    public ModbusSerialListener(SerialParameters params) {
+    public ModbusSerialListener(ModSerialParameters params) {
         serialCon = new SerialConnection(params);
     }
 
-    @Override
     public void setTimeout(int timeout) {
         super.setTimeout(timeout);
         if (serialCon != null && listening) {
@@ -57,14 +56,13 @@ public class ModbusSerialListener extends AbstractModbusListener {
         }
     }
 
-    @Override
     public void run() {
         try {
             serialCon.open();
         }
         // Catch any fatal errors and set the listening flag to false to indicate an error
         catch (Exception e) {
-            error = String.format("Cannot start Serial listener - %s", e.getMessage());
+            error = "Cannot start Serial listener - " + e.getMessage();
             listening = false;
             return;
         }
@@ -99,7 +97,6 @@ public class ModbusSerialListener extends AbstractModbusListener {
         }
     }
 
-    @Override
     public void stop() {
         listening = false;
         if (serialCon != null) {

@@ -29,11 +29,14 @@ public class ModbusException extends Exception {
      */
     private static final long serialVersionUID = 1L;
 
+    private final Throwable cause;
+
     /**
      * Constructs a new <tt>ModbusException</tt> instance.
      */
     public ModbusException() {
         super();
+        this.cause = null;
     }
 
     /**
@@ -45,18 +48,7 @@ public class ModbusException extends Exception {
      */
     public ModbusException(String message) {
         super(message);
-    }
-
-    /**
-     * Constructs a new <tt>ModbusException</tt> instance with the given
-     * message.
-     * <p>
-     *
-     * @param message the message describing this <tt>ModbusException</tt>.
-     * @param values optional values of the exception
-     */
-    public ModbusException(String message, Object... values) {
-        super(String.format(message, values));
+        this.cause = null;
     }
 
     /**
@@ -69,6 +61,12 @@ public class ModbusException extends Exception {
      *                (A {@code null} value is permitted, and indicates that the cause is nonexistent or unknown.)
      */
     public ModbusException(String message, Throwable cause) {
-        super(message, cause);
+        super(message + ": " + cause);
+        this.cause = cause;
     }
+
+    public Throwable getCause() {
+        return cause;
+    }
+
 }

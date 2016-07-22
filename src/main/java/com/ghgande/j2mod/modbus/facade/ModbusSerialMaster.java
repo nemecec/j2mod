@@ -18,7 +18,7 @@ package com.ghgande.j2mod.modbus.facade;
 import com.ghgande.j2mod.modbus.Modbus;
 import com.ghgande.j2mod.modbus.io.AbstractModbusTransport;
 import com.ghgande.j2mod.modbus.net.SerialConnection;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +39,10 @@ public class ModbusSerialMaster extends AbstractModbusMaster {
      * Constructs a new master facade instance for communication
      * with a given slave.
      *
-     * @param param SerialParameters specifies the serial port parameters to use
+     * @param param ModSerialParameters specifies the serial port parameters to use
      *              to communicate with the slave device network.
      */
-    public ModbusSerialMaster(SerialParameters param) {
+    public ModbusSerialMaster(ModSerialParameters param) {
         this(param, Modbus.DEFAULT_TIMEOUT);
     }
 
@@ -50,11 +50,11 @@ public class ModbusSerialMaster extends AbstractModbusMaster {
      * Constructs a new master facade instance for communication
      * with a given slave.
      *
-     * @param param   SerialParameters specifies the serial port parameters to use
+     * @param param   ModSerialParameters specifies the serial port parameters to use
      *                to communicate with the slave device network.
      * @param timeout Receive timeout in milliseconds
      */
-    public ModbusSerialMaster(SerialParameters param, int timeout) {
+    public ModbusSerialMaster(ModSerialParameters param, int timeout) {
         try {
             connection = new SerialConnection(param);
             connection.setTimeout(timeout);
@@ -89,7 +89,6 @@ public class ModbusSerialMaster extends AbstractModbusMaster {
         }
     }
 
-    @Override
     public void setTimeout(int timeout) {
         super.setTimeout(timeout);
         if (connection != null) {
@@ -97,7 +96,6 @@ public class ModbusSerialMaster extends AbstractModbusMaster {
         }
     }
 
-    @Override
     public AbstractModbusTransport getTransport() {
         return connection == null ? null : connection.getModbusTransport();
     }

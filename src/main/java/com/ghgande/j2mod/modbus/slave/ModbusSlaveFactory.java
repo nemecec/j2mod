@@ -17,14 +17,15 @@ package com.ghgande.j2mod.modbus.slave;
 
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.net.AbstractModbusListener;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
+import com.ghgande.j2mod.modbus.util.ModCollections;
 import com.ghgande.j2mod.modbus.util.ModbusUtil;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Class that implements a <tt>ModbusIOException</tt>. Instances of this
@@ -36,46 +37,7 @@ import java.util.Map;
 public class ModbusSlaveFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ModbusSlaveFactory.class);
-    private static Map<String, ModbusSlave> slaves = new HashMap<String, ModbusSlave>();
-
-    /**
-     * Creates a TCP modbus slave or returns the one already allocated to this port
-     *
-     * @param port     Port to listen on
-     * @param poolSize Pool size of listener threads
-     * @return new or existing TCP modbus slave associated with the port
-     * @throws ModbusException If a problem occurs e.g. port already in use
-     */
-    public static synchronized ModbusSlave createTCPSlave(int port, int poolSize) throws ModbusException {
-        String key = ModbusSlaveType.TCP.getKey(port);
-        if (slaves.containsKey(key)) {
-            return slaves.get(key);
-        }
-        else {
-            ModbusSlave slave = new ModbusSlave(port, poolSize);
-            slaves.put(key, slave);
-            return slave;
-        }
-    }
-
-    /**
-     * Creates a UDP modbus slave or returns the one already allocated to this port
-     *
-     * @param port Port to listen on
-     * @return new or existing UDP modbus slave associated with the port
-     * @throws ModbusException If a problem occurs e.g. port already in use
-     */
-    public static synchronized ModbusSlave createUDPSlave(int port) throws ModbusException {
-        String key = ModbusSlaveType.UDP.getKey(port);
-        if (slaves.containsKey(key)) {
-            return slaves.get(key);
-        }
-        else {
-            ModbusSlave slave = new ModbusSlave(port);
-            slaves.put(key, slave);
-            return slave;
-        }
-    }
+    private static Hashtable slaves = new Hashtable();
 
     /**
      * Creates a serial modbus slave or returns the one already allocated to this port
@@ -84,7 +46,7 @@ public class ModbusSlaveFactory {
      * @return new or existing Serial modbus slave associated with the port
      * @throws ModbusException If a problem occurs e.g. port already in use
      */
-    public static synchronized ModbusSlave createSerialSlave(SerialParameters serialParams) throws ModbusException {
+    public static synchronized ModbusSlave createSerialSlave(ModSerialParameters serialParams) throws ModbusException {
         if (serialParams == null) {
             throw new ModbusException("Serial parameters are null");
         }
@@ -92,7 +54,7 @@ public class ModbusSlaveFactory {
             throw new ModbusException("Serial port name is empty");
         }
         if (slaves.containsKey(serialParams.getPortName())) {
-            return slaves.get(serialParams.getPortName());
+            return (ModbusSlave) slaves.get(serialParams.getPortName());
         }
         else {
             ModbusSlave slave = new ModbusSlave(serialParams);
@@ -117,7 +79,9 @@ public class ModbusSlaveFactory {
      * Closes all slaves and removes them from the running list
      */
     public static synchronized void close() {
-        for (ModbusSlave slave : new ArrayList<ModbusSlave>(slaves.values())) {
+        Vector slaveList = ModCollections.getValues(slaves);
+        for (int i = 0; i < slaveList.size(); i++) {
+            ModbusSlave slave = (ModbusSlave) slaveList.elementAt(i);
             slave.close();
         }
     }
@@ -129,7 +93,7 @@ public class ModbusSlaveFactory {
      * @return Null or ModbusSlave
      */
     public static ModbusSlave getSlave(int port) {
-        return slaves.get(port + "");
+        return (ModbusSlave) slaves.get(port + "");
     }
 
     /**
@@ -139,7 +103,7 @@ public class ModbusSlaveFactory {
      * @return Null or ModbusSlave
      */
     public static ModbusSlave getSlave(String port) {
-        return ModbusUtil.isBlank(port) ? null : slaves.get(port);
+        return ModbusUtil.isBlank(port) ? null : (ModbusSlave) slaves.get(port);
     }
 
     /**
@@ -149,7 +113,9 @@ public class ModbusSlaveFactory {
      * @return Null or ModbusSlave
      */
     public static synchronized ModbusSlave getSlave(AbstractModbusListener listener) {
-        for (ModbusSlave slave : slaves.values()) {
+        Enumeration values = slaves.elements();
+        while (values.hasMoreElements()) {
+            ModbusSlave slave = (ModbusSlave) values.nextElement();
             if (slave.getListener().equals(listener)) {
                 return slave;
             }

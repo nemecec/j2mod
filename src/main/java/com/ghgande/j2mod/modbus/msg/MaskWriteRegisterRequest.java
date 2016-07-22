@@ -140,7 +140,6 @@ public final class MaskWriteRegisterRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         MaskWriteRegisterResponse response;
 

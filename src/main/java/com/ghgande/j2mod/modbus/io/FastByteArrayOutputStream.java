@@ -145,8 +145,8 @@ public class FastByteArrayOutputStream extends OutputStream {
         if (needed > 0) {
             bump(needed);
         }
-        for (byte aFromBuf : fromBuf) {
-            buf[count++] = aFromBuf;
+        for (int i = 0; i < fromBuf.length; i++) {
+            buf[count++] = fromBuf[i];
         }
     }
 

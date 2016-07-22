@@ -18,7 +18,8 @@ package com.ghgande.j2mod.modbus.cmd;
 import com.ghgande.j2mod.modbus.ModbusCoupler;
 import com.ghgande.j2mod.modbus.net.ModbusSerialListener;
 import com.ghgande.j2mod.modbus.procimg.*;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
+import com.ghgande.j2mod.modbus.serial.JSerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +137,7 @@ public class SerialSlaveTest {
             ModbusCoupler.getReference().setMaster(false);
 
             // 3. Set up serial parameters
-            SerialParameters params = new SerialParameters();
+            ModSerialParameters params = new JSerialParameters();
 
             params.setPortName(portname);
             params.setBaudRate(19200);

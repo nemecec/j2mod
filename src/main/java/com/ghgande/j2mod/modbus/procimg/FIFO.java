@@ -38,12 +38,12 @@ public class FIFO {
 
     private int address;
     private int registerCount;
-    private Vector<Register> registers;
+    private Vector registers;
 
     public FIFO(int address) {
         this.address = address;
         registerCount = 0;
-        registers = new Vector<Register>();
+        registers = new Vector();
     }
 
     public synchronized int getRegisterCount() {
@@ -55,7 +55,7 @@ public class FIFO {
 
         result[0] = new SimpleRegister(registerCount);
         for (int i = 0; i < registerCount; i++) {
-            result[i + 1] = registers.get(i);
+            result[i + 1] = (Register) registers.elementAt(i);
         }
 
         return result;
@@ -63,13 +63,13 @@ public class FIFO {
 
     public synchronized void pushRegister(Register register) {
         if (registerCount == 31) {
-            registers.remove(0);
+            registers.removeElementAt(0);
         }
         else {
             registerCount++;
         }
 
-        registers.add(new SimpleRegister(register.getValue()));
+        registers.addElement(new SimpleRegister(register.getValue()));
     }
 
     public synchronized void resetRegisters() {

@@ -19,9 +19,10 @@ import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.facade.ModbusSerialMaster;
 import com.ghgande.j2mod.modbus.procimg.InputRegister;
 import com.ghgande.j2mod.modbus.procimg.Register;
+import com.ghgande.j2mod.modbus.serial.JSerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
 import com.ghgande.j2mod.modbus.util.BitVector;
 import com.ghgande.j2mod.modbus.util.ModbusUtil;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +91,7 @@ public class SerialFacadeTest {
             }
 
             // 2. Setup serial parameters
-            SerialParameters params = new SerialParameters();
+            ModSerialParameters params = new JSerialParameters();
             params.setPortName(portname);
             params.setBaudRate(9600);
             params.setDatabits(8);

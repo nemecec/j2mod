@@ -200,7 +200,7 @@ public final class BitVector {
      */
     public final boolean getBit(int index) throws IndexOutOfBoundsException {
         index = translateIndex(index);
-        logger.debug("Get bit #{}", index);
+        logger.debug("Get bit #{}", String.valueOf(index));
         return ((data[byteIndex(index)]
                 & (0x01 << bitIndex(index))) != 0
         );
@@ -218,7 +218,7 @@ public final class BitVector {
      */
     public final void setBit(int index, boolean b) throws IndexOutOfBoundsException {
         index = translateIndex(index);
-        logger.debug("Set bit #{}", index);
+        logger.debug("Set bit #{}", String.valueOf(index));
         int value = ((b) ? 1 : 0);
         int byteNum = byteIndex(index);
         int bitNum = bitIndex(index);
@@ -271,23 +271,24 @@ public final class BitVector {
      * contents of the bit collection in a way that
      * can be printed to a screen or log.
      * <p>
-     * Note that this representation will <em>ALLWAYS</em>
+     * Note that this representation will <em>ALWAYS</em>
      * show the MSB to the left and the LSB to the right
      * in each byte.
      *
      * @return a <tt>String</tt> representing this <tt>BitVector</tt>.
      */
     public String toString() {
-        StringBuilder sbuf = new StringBuilder();
+        final int byteSize = 8;
+        StringBuffer sbuf = new StringBuffer();
         for (int i = 0; i < data.length; i++) {
 
-            int numberOfBitsToPrint = Byte.SIZE;
-            int remainingBits = size - (i * Byte.SIZE);
-            if (remainingBits < Byte.SIZE) {
+            int numberOfBitsToPrint = byteSize;
+            int remainingBits = size - (i * byteSize);
+            if (remainingBits < byteSize) {
                 numberOfBitsToPrint = remainingBits;
             }
 
-            sbuf.append(String.format("%" + numberOfBitsToPrint + "s", Integer.toBinaryString(data[i] & 0xFF)).replace(' ', '0'));
+            ByteFormatter.leftPadWithZeros(sbuf, Integer.toBinaryString(data[i] & 0xFF), numberOfBitsToPrint);
             sbuf.append(" ");
         }
         return sbuf.toString();

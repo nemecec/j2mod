@@ -70,7 +70,11 @@ public final class ReadInputRegistersRequest extends ModbusRequest {
         setWordCount(count);
     }
 
-    public ReadInputRegistersResponse getResponse() {
+    public ModbusResponse getResponse() {
+        return getLocalResponse();
+    }
+
+    public ReadInputRegistersResponse getLocalResponse() {
         ReadInputRegistersResponse response = new ReadInputRegistersResponse();
 
         response.setUnitID(getUnitID());
@@ -84,7 +88,6 @@ public final class ReadInputRegistersRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         ReadInputRegistersResponse response;
         InputRegister[] inpregs;
@@ -98,7 +101,7 @@ public final class ReadInputRegistersRequest extends ModbusRequest {
         catch (IllegalAddressException iaex) {
             return createExceptionResponse(Modbus.ILLEGAL_ADDRESS_EXCEPTION);
         }
-        response = getResponse();
+        response = getLocalResponse();
         response.setRegisters(inpregs);
 
         return response;

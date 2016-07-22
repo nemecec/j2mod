@@ -15,20 +15,19 @@
  */
 package com.ghgande.j2mod.modbus.io;
 
-import com.fazecast.jSerialComm.SerialPort;
 import com.ghgande.j2mod.modbus.ModbusIOException;
 import com.ghgande.j2mod.modbus.msg.ModbusMessage;
 import com.ghgande.j2mod.modbus.msg.ModbusRequest;
 import com.ghgande.j2mod.modbus.msg.ModbusResponse;
 import com.ghgande.j2mod.modbus.net.AbstractModbusListener;
+import com.ghgande.j2mod.modbus.serial.ModSerialPort;
+import com.ghgande.j2mod.modbus.util.ByteFormatter;
 import com.ghgande.j2mod.modbus.util.ModbusUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Vector;
 
 /**
  * Abstract base class for serial <tt>ModbusTransport</tt>
@@ -52,9 +51,9 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     public static final int FRAME_END = 2000;
 
-    protected SerialPort commPort;
+    protected ModSerialPort commPort;
     protected boolean echo = false;     // require RS-485 echo processing
-    private final Set<AbstractSerialTransportListener> listeners = Collections.synchronizedSet(new HashSet<AbstractSerialTransportListener>());
+    private final Vector listeners = new Vector();
 
     /**
      * Creates a new transaction suitable for the serial port
@@ -67,7 +66,6 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
         return transaction;
     }
 
-    @Override
     public void writeMessage(ModbusMessage msg) throws ModbusIOException {
         open();
         notifyListenersBeforeWrite(msg);
@@ -75,12 +73,11 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
 
         // Wait here for the message to have been sent
 
-        double bytesPerSec = commPort.getBaudRate() / (commPort.getNumDataBits() + commPort.getNumStopBits() + (commPort.getParity() == SerialPort.NO_PARITY ? 0 : 1));
+        double bytesPerSec = commPort.getBaudRate() / (commPort.getNumDataBits() + commPort.getNumStopBits() + (commPort.getParity() == ModSerialPort.NO_PARITY ? 0 : 1));
         double delay = 1000000000.0 * msg.getOutputLength() / bytesPerSec;
         double delayMilliSeconds = Math.floor(delay / 1000000);
-        double delayNanoSeconds = delay % 1000000;
         try {
-            Thread.sleep((int)delayMilliSeconds, (int)delayNanoSeconds);
+            Thread.sleep((int)delayMilliSeconds);
         }
         catch (Exception e) {
             logger.debug("nothing to do");
@@ -88,7 +85,6 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
         notifyListenersAfterWrite(msg);
     }
 
-    @Override
     public ModbusRequest readRequest(AbstractModbusListener listener) throws ModbusIOException {
         open();
         notifyListenersBeforeRequest();
@@ -97,7 +93,6 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
         return req;
     }
 
-    @Override
     public ModbusResponse readResponse() throws ModbusIOException {
         notifyListenersBeforeResponse();
         ModbusResponse res = readResponseIn();
@@ -113,16 +108,15 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
         if (commPort != null && !commPort.isOpen()) {
             setTimeout(timeout);
             if (!commPort.openPort()) {
-                throw new ModbusIOException(String.format("Cannot open port %s", commPort.getDescriptivePortName()));
+                throw new ModbusIOException("Cannot open port " + commPort.getDescriptivePortName());
             }
         }
     }
 
-    @Override
     public void setTimeout(int time) {
         super.setTimeout(time);
         if (commPort != null) {
-            commPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, timeout, 0);
+            commPort.setComPortTimeouts(ModSerialPort.TIMEOUT_READ_BLOCKING, timeout, 0);
         }
     }
 
@@ -166,7 +160,7 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     public void addListener(AbstractSerialTransportListener listener) {
         if (listener != null) {
-            listeners.add(listener);
+            listeners.addElement(listener);
         }
     }
 
@@ -177,7 +171,7 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     public void removeListener(AbstractSerialTransportListener listener) {
         if (listener != null) {
-            listeners.remove(listener);
+            listeners.removeElement(listener);
         }
     }
 
@@ -185,7 +179,7 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      * Clears the list of listeners
      */
     public void clearListeners() {
-        listeners.clear();
+        listeners.removeAllElements();
     }
 
     /**
@@ -193,7 +187,9 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     private void notifyListenersBeforeRequest() {
         synchronized (listeners) {
-            for (AbstractSerialTransportListener listener : listeners) {
+            for (int i = 0; i < listeners.size(); i++) {
+                AbstractSerialTransportListener listener =
+                  (AbstractSerialTransportListener) listeners.elementAt(i);
                 listener.beforeRequestRead(commPort);
             }
         }
@@ -206,7 +202,9 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     private void notifyListenersAfterRequest(ModbusRequest req) {
         synchronized (listeners) {
-            for (AbstractSerialTransportListener listener : listeners) {
+            for (int i = 0; i < listeners.size(); i++) {
+                AbstractSerialTransportListener listener =
+                  (AbstractSerialTransportListener) listeners.elementAt(i);
                 listener.afterRequestRead(commPort, req);
             }
         }
@@ -217,7 +215,9 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     private void notifyListenersBeforeResponse() {
         synchronized (listeners) {
-            for (AbstractSerialTransportListener listener : listeners) {
+            for (int i = 0; i < listeners.size(); i++) {
+                AbstractSerialTransportListener listener =
+                  (AbstractSerialTransportListener) listeners.elementAt(i);
                 listener.beforeResponseRead(commPort);
             }
         }
@@ -230,7 +230,9 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     private void notifyListenersAfterResponse(ModbusResponse res) {
         synchronized (listeners) {
-            for (AbstractSerialTransportListener listener : listeners) {
+            for (int i = 0; i < listeners.size(); i++) {
+                AbstractSerialTransportListener listener =
+                  (AbstractSerialTransportListener) listeners.elementAt(i);
                 listener.afterResponseRead(commPort, res);
             }
         }
@@ -243,7 +245,9 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     private void notifyListenersBeforeWrite(ModbusMessage msg) {
         synchronized (listeners) {
-            for (AbstractSerialTransportListener listener : listeners) {
+            for (int i = 0; i < listeners.size(); i++) {
+                AbstractSerialTransportListener listener =
+                  (AbstractSerialTransportListener) listeners.elementAt(i);
                 listener.beforeMessageWrite(commPort, msg);
             }
         }
@@ -256,7 +260,9 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     private void notifyListenersAfterWrite(ModbusMessage msg) {
         synchronized (listeners) {
-            for (AbstractSerialTransportListener listener : listeners) {
+            for (int i = 0; i < listeners.size(); i++) {
+                AbstractSerialTransportListener listener =
+                  (AbstractSerialTransportListener) listeners.elementAt(i);
                 listener.afterMessageWrite(commPort, msg);
             }
         }
@@ -270,7 +276,7 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      *
      * @throws IOException if an I/O related error occurs.
      */
-    public void setCommPort(SerialPort cp) throws IOException {
+    public void setCommPort(ModSerialPort cp) throws IOException {
         commPort = cp;
         setTimeout(timeout);
     }
@@ -300,7 +306,7 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
      */
     public void setBaudRate(int baud) {
         commPort.setBaudRate(baud);
-        logger.debug("baud rate is now {}", commPort.getBaudRate());
+        logger.debug("baud rate is now {}", String.valueOf(commPort.getBaudRate()));
     }
 
     /**
@@ -405,16 +411,16 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
                 return ModbusASCIITransport.FRAME_END;
             }
             else {
-                logger.debug("Read From buffer: " + buffer[0] + " (" + String.format("%02X", buffer[0]) + ")");
+                logger.debug("Read From buffer: " + buffer[0] + " (" + ByteFormatter.formatAsHex(buffer[0]) + ")");
                 byte firstValue = buffer[0];
                 cnt = commPort.readBytes(buffer, 1);
                 if (cnt != 1) {
                     throw new IOException("Cannot read from serial port");
                 }
                 else {
-                    logger.debug("Read From buffer: " + buffer[0] + " (" + String.format("%02X", buffer[0]) + ")");
-                    int combinedValue = (Character.digit(firstValue, 16) << 4) + Character.digit(buffer[0], 16);
-                    logger.debug("Returning combined value of: " + String.format("%02X", combinedValue));
+                    logger.debug("Read From buffer: " + buffer[0] + " (" + ByteFormatter.formatAsHex(buffer[0]) + ")");
+                    int combinedValue = (Character.digit((char) firstValue, 16) << 4) + Character.digit((char) buffer[0], 16);
+                    logger.debug("Returning combined value of: " + ByteFormatter.formatAsHex(combinedValue));
                     return combinedValue;
                 }
             }
@@ -449,7 +455,7 @@ public abstract class ModbusSerialTransport extends AbstractModbusTransport {
             }
             else {
                 buffer = ModbusUtil.toHex(value);
-                logger.debug("Wrote byte {}={}", value, ModbusUtil.toHex(value));
+                logger.debug("Wrote byte {}={}", String.valueOf(value), ModbusUtil.toHex(value));
             }
             return commPort.writeBytes(buffer, buffer.length);
         }

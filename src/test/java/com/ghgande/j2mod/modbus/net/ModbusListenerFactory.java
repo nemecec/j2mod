@@ -16,7 +16,8 @@
 package com.ghgande.j2mod.modbus.net;
 
 import com.fazecast.jSerialComm.SerialPort;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
+import com.ghgande.j2mod.modbus.serial.JSerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class ModbusListenerFactory {
              * device.  If there is an additional part after the
              * device name, it will be used as the Modbus unit number.
              */
-            SerialParameters parms = new SerialParameters();
+            ModSerialParameters parms = new JSerialParameters();
             parms.setPortName(parts[1]);
             parms.setBaudRate(19200);
             parms.setDatabits(8);

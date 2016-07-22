@@ -59,8 +59,8 @@ public final class WriteFileRecordRequest extends ModbusRequest {
         }
 
         int size = 1;
-        for (RecordRequest record : records) {
-            size += record.getRequestSize();
+        for (int i = 0; i < records.length; i++) {
+            size += records[i].getRequestSize();
         }
 
         return size;
@@ -134,7 +134,6 @@ public final class WriteFileRecordRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         WriteFileRecordResponse response;
         response = (WriteFileRecordResponse)getResponse();
@@ -246,9 +245,9 @@ public final class WriteFileRecordRequest extends ModbusRequest {
         results[0] = (byte)(getRequestSize() - 1);
 
         int offset = 1;
-        for (RecordRequest record : records) {
-            record.getRequest(results, offset);
-            offset += record.getRequestSize();
+        for (int i = 0; i < records.length; i++) {
+            records[i].getRequest(results, offset);
+            offset += records[i].getRequestSize();
         }
         return results;
     }

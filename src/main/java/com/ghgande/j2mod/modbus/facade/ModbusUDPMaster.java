@@ -106,7 +106,6 @@ public class ModbusUDPMaster extends AbstractModbusMaster {
         }
     }
 
-    @Override
     public void setTimeout(int timeout) {
         super.setTimeout(timeout);
         if (connection != null) {
@@ -114,7 +113,6 @@ public class ModbusUDPMaster extends AbstractModbusMaster {
         }
     }
 
-    @Override
     public AbstractModbusTransport getTransport() {
         return connection == null ? null : connection.getModbusTransport();
     }

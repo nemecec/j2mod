@@ -103,7 +103,7 @@ public final class ReadCommEventLogResponse extends ModbusResponse {
      */
     public int getEvent(int index) {
         if (events == null || index < 0 || index >= events.length) {
-            throw new IndexOutOfBoundsException("index = " + index + ", limit = " + (events == null ? "null" : events.length));
+            throw new IndexOutOfBoundsException("index = " + index + ", limit = " + (events == null ? "null" : String.valueOf(events.length)));
         }
 
         return events[index] & 0xFF;
@@ -146,7 +146,7 @@ public final class ReadCommEventLogResponse extends ModbusResponse {
      */
     public void setEvent(int index, int event) {
         if (events == null || index < 0 || index >= events.length) {
-            throw new IndexOutOfBoundsException("index = " + index + ", limit = " + (events == null ? "null" : events.length));
+            throw new IndexOutOfBoundsException("index = " + index + ", limit = " + (events == null ? "null" : String.valueOf(events.length)));
         }
 
         events[index] = (byte)event;

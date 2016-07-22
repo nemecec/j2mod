@@ -81,7 +81,6 @@ public final class WriteCoilRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         WriteCoilResponse response;
         DigitalOut dout;

@@ -56,8 +56,8 @@ public final class ReadFileRecordResponse extends ModbusResponse {
         }
 
         int size = 1;
-        for (RecordResponse record : records) {
-            size += record.getResponseSize();
+        for (int i = 0; i < records.length; i++) {
+            size += records[i].getResponseSize();
         }
 
         return size;
@@ -109,8 +109,8 @@ public final class ReadFileRecordResponse extends ModbusResponse {
             return;
         }
 
-        for (RecordResponse record : records) {
-            dout.write(record.getResponse());
+        for (int i = 0; i < records.length; i++) {
+            dout.write(records[i].getResponse());
         }
     }
 
@@ -147,9 +147,9 @@ public final class ReadFileRecordResponse extends ModbusResponse {
         int offset = 0;
         result[offset++] = (byte)(result.length - 1);
 
-        for (RecordResponse record : records) {
-            record.getResponse(result, offset);
-            offset += record.getWordCount() * 2;
+        for (int i = 0; i < records.length; i++) {
+            records[i].getResponse(result, offset);
+            offset += records[i].getWordCount() * 2;
         }
         return result;
     }

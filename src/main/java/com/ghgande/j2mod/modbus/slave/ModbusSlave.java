@@ -18,15 +18,12 @@ package com.ghgande.j2mod.modbus.slave;
 import com.ghgande.j2mod.modbus.ModbusException;
 import com.ghgande.j2mod.modbus.net.AbstractModbusListener;
 import com.ghgande.j2mod.modbus.net.ModbusSerialListener;
-import com.ghgande.j2mod.modbus.net.ModbusTCPListener;
-import com.ghgande.j2mod.modbus.net.ModbusUDPListener;
 import com.ghgande.j2mod.modbus.procimg.ProcessImage;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Hashtable;
 
 /**
  * Class that implements a wrapper around a Slave Listener
@@ -40,32 +37,11 @@ public class ModbusSlave {
 
     private ModbusSlaveType type;
     private int port;
-    private SerialParameters serialParams;
+    private ModSerialParameters serialParams;
     private AbstractModbusListener listener;
     private boolean isRunning;
 
-    private Map<Integer, ProcessImage> processImages = new HashMap<Integer, ProcessImage>();
-
-    /**
-     * Creates a TCP modbus slave
-     *
-     * @param port     Port to listen on if IP type
-     * @param poolSize Pool size for TCP slaves
-     * @throws ModbusException If a problem occurs e.g. port already in use
-     */
-    protected ModbusSlave(int port, int poolSize) throws ModbusException {
-        this(ModbusSlaveType.TCP, port, poolSize, null);
-    }
-
-    /**
-     * Creates a UDP modbus slave
-     *
-     * @param port Port to listen on if IP type
-     * @throws ModbusException If a problem occurs e.g. port already in use
-     */
-    protected ModbusSlave(int port) throws ModbusException {
-        this(ModbusSlaveType.UDP, port, 0, null);
-    }
+    private Hashtable processImages = new Hashtable();
 
     /**
      * Creates a serial modbus slave
@@ -73,7 +49,7 @@ public class ModbusSlave {
      * @param serialParams Serial parameters for serial type slaves
      * @throws ModbusException If a problem occurs e.g. port already in use
      */
-    protected ModbusSlave(SerialParameters serialParams) throws ModbusException {
+    protected ModbusSlave(ModSerialParameters serialParams) throws ModbusException {
         this(ModbusSlaveType.SERIAL, 0, 0, serialParams);
     }
 
@@ -86,7 +62,7 @@ public class ModbusSlave {
      * @param serialParams Serial parameters for serial type slaves
      * @throws ModbusException If a problem occurs e.g. port already in use
      */
-    private ModbusSlave(ModbusSlaveType type, int port, int poolSize, SerialParameters serialParams) throws ModbusException {
+    private ModbusSlave(ModbusSlaveType type, int port, int poolSize, ModSerialParameters serialParams) throws ModbusException {
         this.type = type == null ? ModbusSlaveType.TCP : type;
         this.port = port;
         this.serialParams = serialParams;
@@ -94,15 +70,7 @@ public class ModbusSlave {
         // Create the listener
 
         logger.debug("Creating {} listener", this.type.toString());
-        if (this.type.is(ModbusSlaveType.UDP)) {
-            listener = new ModbusUDPListener();
-        }
-        else if (this.type.is(ModbusSlaveType.TCP)) {
-            listener = new ModbusTCPListener(poolSize);
-        }
-        else {
-            listener = new ModbusSerialListener(serialParams);
-        }
+        listener = new ModbusSerialListener(serialParams);
 
         listener.setListening(true);
         listener.setPort(port);
@@ -134,7 +102,7 @@ public class ModbusSlave {
      * @return Process image
      */
     public ProcessImage getProcessImage(int unitId) {
-        return processImages.get(unitId);
+        return (ProcessImage) processImages.get(new Integer(unitId));
     }
 
     /**
@@ -144,7 +112,7 @@ public class ModbusSlave {
      * @return Process image
      */
     public ProcessImage removeProcessImage(int unitId) {
-        return processImages.remove(unitId);
+        return (ProcessImage) processImages.remove(new Integer(unitId));
     }
 
     /**
@@ -155,7 +123,7 @@ public class ModbusSlave {
      * @return Process image
      */
     public ProcessImage addProcessImage(int unitId, ProcessImage processImage) {
-        return processImages.put(unitId, processImage);
+        return (ProcessImage) processImages.put(new Integer(unitId), processImage);
     }
 
     /**
@@ -163,7 +131,7 @@ public class ModbusSlave {
      *
      * @return Serial parameters
      */
-    public SerialParameters getSerialParams() {
+    public ModSerialParameters getSerialParams() {
         return serialParams;
     }
 

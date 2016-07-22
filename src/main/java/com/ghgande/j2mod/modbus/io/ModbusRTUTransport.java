@@ -124,7 +124,7 @@ public class ModbusRTUTransport extends ModbusSerialTransport {
                         break;
 
                     default:
-                        throw new IOException(String.format("getResponse unrecognised function code [%s]", function));
+                        throw new IOException("getResponse unrecognised function code [" + function + "]");
                 }
             }
         }
@@ -223,7 +223,7 @@ public class ModbusRTUTransport extends ModbusSerialTransport {
                         break;
 
                     default:
-                        throw new IOException(String.format("getResponse unrecognised function code [%s]", function));
+                        throw new IOException("getResponse unrecognised function code [" + function + "]");
 
                 }
             }
@@ -234,7 +234,7 @@ public class ModbusRTUTransport extends ModbusSerialTransport {
             }
         }
         catch (IOException e) {
-            throw new IOException(String.format("getResponse serial port exception - %s", e.getMessage()));
+            throw new IOException("getResponse serial port exception - " + e.getMessage());
         }
     }
 
@@ -277,7 +277,6 @@ public class ModbusRTUTransport extends ModbusSerialTransport {
         }
     }
 
-    @Override
     protected ModbusRequest readRequestIn(AbstractModbusListener listener) throws ModbusIOException {
         boolean done;
         ModbusRequest request;
@@ -317,7 +316,7 @@ public class ModbusRTUTransport extends ModbusSerialTransport {
                         int[] crc = ModbusUtil.calculateCRC(inBuffer, 0, dlength); // does not include CRC
                         if (ModbusUtil.unsignedByteToInt(inBuffer[dlength]) != crc[0] &&
                                 ModbusUtil.unsignedByteToInt(inBuffer[dlength + 1]) != crc[1]) {
-                            logger.debug("CRC should be {}, {}", crc[0], crc[1]);
+                            logger.debug("CRC should be {}, {}", String.valueOf(crc[0]), String.valueOf(crc[1]));
 
                             // Drain the input in case the frame was misread and more
                             // was to follow.
@@ -387,7 +386,7 @@ public class ModbusRTUTransport extends ModbusSerialTransport {
                         // check CRC
                         int[] crc = ModbusUtil.calculateCRC(inBuffer, 0, dlength); // does not include CRC
                         if (ModbusUtil.unsignedByteToInt(inBuffer[dlength]) != crc[0] && ModbusUtil.unsignedByteToInt(inBuffer[dlength + 1]) != crc[1]) {
-                            logger.debug("CRC should be {}, {}", crc[0], crc[1]);
+                            logger.debug("CRC should be {}, {}", String.valueOf(crc[0]), String.valueOf(crc[1]));
                             throw new IOException("CRC Error in received frame: " + dlength + " bytes: " + ModbusUtil.toHex(byteInputStream.getBuffer(), 0, dlength));
                         }
                     }
@@ -404,7 +403,7 @@ public class ModbusRTUTransport extends ModbusSerialTransport {
             return response;
         }
         catch (IOException ex) {
-            throw new ModbusIOException("I/O exception - failed to read response for request [%s] - %s", ModbusUtil.toHex(lastRequest), ex.getMessage());
+            throw new ModbusIOException("I/O exception - failed to read response for request [" + ex.getMessage() + "] - " + ModbusUtil.toHex(lastRequest));
         }
     }
 }

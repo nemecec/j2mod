@@ -116,7 +116,6 @@ public final class ReadWriteMultipleRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         ReadWriteMultipleResponse response;
         InputRegister[] readRegs;

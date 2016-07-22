@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Vector;
 
 /**
  * Helper class that provides utility methods.
@@ -144,7 +144,7 @@ public final class ModbusUtil {
      */
     public static String toHex(byte[] data, int off, int length) {
         //double size, two bytes (hex range) for one byte
-        StringBuilder buf = new StringBuilder(data.length * 2);
+        StringBuffer buf = new StringBuffer(data.length * 2);
         for (int i = off; i < length; i++) {
             //don't forget the second hex digit
             if (((int)data[i] & 0xff) < 0x10) {
@@ -167,7 +167,7 @@ public final class ModbusUtil {
      * @return the generated hexadecimal representation as <code>byte[]</code>.
      */
     public static byte[] toHex(int i) {
-        StringBuilder buf = new StringBuilder(2);
+        StringBuffer buf = new StringBuffer(2);
         //don't forget the second hex digit
         if ((i & 0xff) < 0x10) {
             buf.append("0");
@@ -443,7 +443,7 @@ public final class ModbusUtil {
      * @return low byte of word
      */
     public static byte lowByte(int wd) {
-        return Integer.valueOf(0xff & wd).byteValue();
+        return new Integer(0xff & wd).byteValue();
     }
 
     /**
@@ -452,7 +452,7 @@ public final class ModbusUtil {
      * @return high byte
      */
     public static byte hiByte(int wd) {
-        return Integer.valueOf(0xff & (wd >> 8)).byteValue();
+        return new Integer(0xff & (wd >> 8)).byteValue();
     }
 
     /**
@@ -492,7 +492,7 @@ public final class ModbusUtil {
      * @return True if the value is blank or empty
      */
     public static boolean isBlank(String value) {
-        return value == null || value.isEmpty();
+        return value == null || value.length() == 0;
     }
 
     /**
@@ -501,7 +501,7 @@ public final class ModbusUtil {
      * @param list List to check
      * @return True if the list is blank or empty
      */
-    public static boolean isBlank(List<Object> list) {
+    public static boolean isBlank(Vector list) {
         return list == null || list.isEmpty();
     }
 

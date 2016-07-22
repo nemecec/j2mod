@@ -72,8 +72,7 @@ public final class ReadCoilsRequest extends ModbusRequest {
         setBitCount(count);
     }
 
-    @Override
-    public ReadCoilsResponse getResponse() {
+    public ModbusResponse getResponse() {
         ReadCoilsResponse response;
         response = new ReadCoilsResponse(bitCount);
 
@@ -90,7 +89,6 @@ public final class ReadCoilsRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         ModbusResponse response;
         DigitalOut[] douts;
@@ -168,12 +166,10 @@ public final class ReadCoilsRequest extends ModbusRequest {
         }
     }
 
-    @Override
     public void writeData(DataOutput dout) throws IOException {
         dout.write(getMessage());
     }
 
-    @Override
     public void readData(DataInput din) throws IOException {
         reference = din.readUnsignedShort();
         bitCount = din.readUnsignedShort();

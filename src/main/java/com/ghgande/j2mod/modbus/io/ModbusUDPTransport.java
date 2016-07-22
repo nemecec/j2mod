@@ -57,7 +57,6 @@ public class ModbusUDPTransport extends AbstractModbusTransport {
         this.terminal = terminal;
     }
 
-    @Override
     public void setTimeout(int time) {
         super.setTimeout(time);
         if (terminal != null) {
@@ -65,19 +64,16 @@ public class ModbusUDPTransport extends AbstractModbusTransport {
         }
     }
 
-    @Override
     public void close() throws IOException {
         //?
     }
 
-    @Override
     public ModbusTransaction createTransaction() {
         ModbusUDPTransaction trans = new ModbusUDPTransaction();
         trans.setTerminal(terminal);
         return trans;
     }
 
-    @Override
     public void writeMessage(ModbusMessage msg) throws ModbusIOException {
         try {
             synchronized (byteOutputStream) {
@@ -94,7 +90,6 @@ public class ModbusUDPTransport extends AbstractModbusTransport {
         }
     }
 
-    @Override
     public ModbusRequest readRequest(AbstractModbusListener listener) throws ModbusIOException {
         try {
             ModbusRequest req;
@@ -113,7 +108,6 @@ public class ModbusUDPTransport extends AbstractModbusTransport {
         }
     }
 
-    @Override
     public ModbusResponse readResponse() throws ModbusIOException {
 
         try {
@@ -133,7 +127,7 @@ public class ModbusUDPTransport extends AbstractModbusTransport {
         }
         catch (Exception ex) {
             logger.debug("I/O exception while reading modbus response.", ex);
-            throw new ModbusIOException("I/O exception - failed to read - %s", ex.getMessage());
+            throw new ModbusIOException("I/O exception - failed to read - " + ex.getMessage());
         }
     }
 

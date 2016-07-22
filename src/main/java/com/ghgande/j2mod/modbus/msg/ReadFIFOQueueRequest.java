@@ -89,7 +89,6 @@ public final class ReadFIFOQueueRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         ReadFIFOQueueResponse response;
         InputRegister[] registers;

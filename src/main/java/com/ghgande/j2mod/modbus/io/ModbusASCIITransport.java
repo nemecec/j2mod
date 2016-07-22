@@ -51,7 +51,6 @@ public class ModbusASCIITransport extends ModbusSerialTransport {
     public ModbusASCIITransport() {
     }
 
-    @Override
     protected void writeMessageOut(ModbusMessage msg) throws ModbusIOException {
 
         try {
@@ -82,7 +81,6 @@ public class ModbusASCIITransport extends ModbusSerialTransport {
         }
     }
 
-    @Override
     public ModbusRequest readRequestIn(AbstractModbusListener listener) throws ModbusIOException {
 
         boolean done = false;
@@ -140,7 +138,6 @@ public class ModbusASCIITransport extends ModbusSerialTransport {
 
     }
 
-    @Override
     protected ModbusResponse readResponseIn() throws ModbusIOException {
 
         boolean done = false;

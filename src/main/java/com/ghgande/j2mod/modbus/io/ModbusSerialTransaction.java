@@ -119,7 +119,6 @@ public class ModbusSerialTransaction extends ModbusTransaction {
         }
     }
 
-    @Override
     public void execute() throws ModbusException {
         //1. assert executeability
         assertExecutable();
@@ -150,7 +149,7 @@ public class ModbusSerialTransaction extends ModbusTransaction {
                 if (++tries >= retries) {
                     throw e;
                 }
-                logger.debug("Execute try {} error: {}", tries, e.getMessage());
+                logger.debug("Execute try {} error: {}", String.valueOf(tries), e.getMessage());
             }
         } while (!finished);
 

@@ -70,7 +70,6 @@ public final class ReadMultipleRegistersRequest extends ModbusRequest {
         setWordCount(count);
     }
 
-    @Override
     public ModbusResponse getResponse() {
         ReadMultipleRegistersResponse response;
 
@@ -85,7 +84,6 @@ public final class ReadMultipleRegistersRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         ReadMultipleRegistersResponse response;
         Register[] regs;

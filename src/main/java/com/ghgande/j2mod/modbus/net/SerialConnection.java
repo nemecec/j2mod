@@ -15,13 +15,13 @@
  */
 package com.ghgande.j2mod.modbus.net;
 
-import com.fazecast.jSerialComm.SerialPort;
 import com.ghgande.j2mod.modbus.Modbus;
 import com.ghgande.j2mod.modbus.io.AbstractModbusTransport;
 import com.ghgande.j2mod.modbus.io.ModbusASCIITransport;
 import com.ghgande.j2mod.modbus.io.ModbusRTUTransport;
 import com.ghgande.j2mod.modbus.io.ModbusSerialTransport;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +41,9 @@ public class SerialConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(SerialConnection.class);
 
-    private SerialParameters parameters;
+    private ModSerialParameters parameters;
     private ModbusSerialTransport transport;
-    private SerialPort serialPort;
+    private ModSerialPort serialPort;
     private InputStream inputStream;
     private int timeout = Modbus.DEFAULT_TIMEOUT;
 
@@ -51,9 +51,9 @@ public class SerialConnection {
      * Creates a SerialConnection object and initializes variables passed in as
      * params.
      *
-     * @param parameters A SerialParameters object.
+     * @param parameters A ModSerialParameters object.
      */
-    public SerialConnection(SerialParameters parameters) {
+    public SerialConnection(ModSerialParameters parameters) {
         this.parameters = parameters;
     }
 
@@ -73,7 +73,7 @@ public class SerialConnection {
      * @throws Exception if an error occurs.
      */
     public void open() throws Exception {
-        serialPort = SerialPort.getCommPort(parameters.getPortName());
+        serialPort = parameters.getCommPort();
         serialPort.closePort();
         setConnectionParameters();
 

@@ -58,8 +58,8 @@ public final class ReadFileRecordRequest extends ModbusRequest {
         }
 
         int size = 1;
-        for (RecordRequest record : records) {
-            size += record.getRequestSize();
+        for (int i = 0; i < records.length; i++) {
+            size += records[i].getRequestSize();
         }
 
         return size;
@@ -132,7 +132,6 @@ public final class ReadFileRecordRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         ReadFileRecordResponse response;
         response = (ReadFileRecordResponse)getResponse();
@@ -226,8 +225,8 @@ public final class ReadFileRecordRequest extends ModbusRequest {
         int offset = 0;
         request[offset++] = (byte)(request.length - 1);
 
-        for (RecordRequest record : records) {
-            record.getRequest(request, offset);
+        for (int i = 0; i < records.length; i++) {
+            records[i].getRequest(request, offset);
             offset += 7;
         }
         return request;

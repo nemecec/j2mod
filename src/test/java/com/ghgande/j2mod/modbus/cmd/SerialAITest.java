@@ -19,7 +19,8 @@ import com.ghgande.j2mod.modbus.io.ModbusSerialTransaction;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersRequest;
 import com.ghgande.j2mod.modbus.msg.ReadInputRegistersResponse;
 import com.ghgande.j2mod.modbus.net.SerialConnection;
-import com.ghgande.j2mod.modbus.util.SerialParameters;
+import com.ghgande.j2mod.modbus.serial.JSerialParameters;
+import com.ghgande.j2mod.modbus.serial.ModSerialParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +74,7 @@ public class SerialAITest {
             }
 
             //3. Setup serial parameters
-            SerialParameters params = new SerialParameters();
+            ModSerialParameters params = new JSerialParameters();
             params.setPortName(portname);
             params.setBaudRate(9600);
             params.setDatabits(8);

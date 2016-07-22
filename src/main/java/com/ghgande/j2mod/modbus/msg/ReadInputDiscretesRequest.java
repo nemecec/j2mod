@@ -82,7 +82,11 @@ public final class ReadInputDiscretesRequest extends ModbusRequest {
      *
      * @return Discretes response
      */
-    public ReadInputDiscretesResponse getResponse() {
+    public ModbusResponse getResponse() {
+        return getLocalResponse();
+    }
+
+    public ReadInputDiscretesResponse getLocalResponse() {
         ReadInputDiscretesResponse response = new ReadInputDiscretesResponse(getBitCount());
 
         response.setUnitID(getUnitID());
@@ -96,7 +100,6 @@ public final class ReadInputDiscretesRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
     public ModbusResponse createResponse(AbstractModbusListener listener) {
         ReadInputDiscretesResponse response;
         DigitalIn[] dins;
@@ -110,7 +113,7 @@ public final class ReadInputDiscretesRequest extends ModbusRequest {
         catch (IllegalAddressException e) {
             return createExceptionResponse(Modbus.ILLEGAL_ADDRESS_EXCEPTION);
         }
-        response = getResponse();
+        response = getLocalResponse();
 
         // Populate the discrete values from the process image.
         for (int i = 0; i < dins.length; i++) {

@@ -145,8 +145,7 @@ public final class ReadSerialDiagnosticsRequest extends ModbusRequest {
         return response;
     }
 
-    @Override
-    public ModbusResponse createResponse(AbstractModbusListener listener) {
+   public ModbusResponse createResponse(AbstractModbusListener listener) {
         return createExceptionResponse(Modbus.ILLEGAL_FUNCTION_EXCEPTION);
     }
 
